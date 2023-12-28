@@ -1,6 +1,28 @@
+from flask import jsonify
+
+
 class Requests:
     def __init__(self, connection):
         self.connect = connection
+
+
+    def login_user(self, username, password):
+        with self.connect.cursor() as cursor:
+            cursor.execute('select user_password from users where user_login = %s ', (username,))
+            row = cursor.fetchone()
+            if row is not None:
+                if password == row[0]:
+                    return jsonify({'success': True, 'message': 'Успешно'})
+                else:
+                    return jsonify({'success': False, 'message': 'Не верный пароль'})
+
+            return jsonify({'success': False, 'message': 'Пользователь не найден'})
+
+    def register_user(self, username, email, password):
+        with self.connect.cursor() as cursor:
+            cursor.execute('insert into users (user_id, user_login, user_password, user_role, user_email)values (default, %s, %s, default, %s)', (username, password, email))
+            self.connect.commit()
+        return jsonify({'success': True}), 200
 
     def select_drivers(self):
         with self.connect.cursor() as cursor:

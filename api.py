@@ -6,6 +6,12 @@ class UserApi:
     def __init__(self):
         self.request = Requests(connect)
 
+    def login_user(self, username, password):
+        return self.request.login_user(username, password)
+
+    def register_user(self, username, email, password):
+        return self.request.register_user(username, email, password)
+
     def get_drivers(self):
         return self.request.select_drivers()
 
